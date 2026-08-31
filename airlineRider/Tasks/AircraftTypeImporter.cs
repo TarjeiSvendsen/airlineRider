@@ -1,5 +1,6 @@
 using System.Text.Json;
 using airlineRider.Models;
+using airlineRider.Utils;
 
 namespace airlineRider.Tasks;
 
@@ -25,7 +26,13 @@ public class AircraftTypeImporter
         {
             var file = File.ReadAllTextAsync(fileName);
             var element = JsonElement.Parse(file.Result);
-            TypeContext.AircraftTypes.Add(new AircraftType(element.GetProperty("model").ToString(),element.GetProperty("iata").ToString(),element.GetProperty("icao").ToString(),element.GetProperty("manufacturer").ToString()));
+            var aircraftType = new AircraftType();
+            aircraftType.Model = element.GetProperty("model").ToString();
+            aircraftType.Iata = element.GetProperty("iata").ToString();
+            aircraftType.Icao = element.GetProperty("icao").ToString();
+            aircraftType.Manufacturer = element.GetProperty("manufacturer").ToString();
+            aircraftType.LiveryInfo = AircraftTypeImporterUtils.ParseLiveryInfo(element);
+            TypeContext.AircraftTypes.Add(aircraftType);
         }
 
         TypeContext.SaveChanges();
