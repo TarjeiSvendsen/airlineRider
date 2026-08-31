@@ -1,25 +1,22 @@
+using Microsoft.EntityFrameworkCore;
+using airlineRider.Models;
+using airlineRider.Tasks;
+using StackExchange.Redis;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
 // DBContext for Aircraft types.
-builder.Services.AddDbContext<AircraftTypeContext>(opt =>
-{
-    opt.UseMongoDB(mongoClient, "airlineRider");
-});
+builder.Services.AddDbContextPool<AircraftTypeContext>(opt => 
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6380"));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
 
 app.UseHttpsRedirection();
 
@@ -33,11 +30,13 @@ using (var serviceScope = app.Services.CreateScope())
     
     var aircraftTypeContext = services.GetRequiredService<AircraftTypeContext>();
     
+    aircraftTypeContext.Database.EnsureDeleted(); // Temporarily here as I constantly change the schema.
+    aircraftTypeContext.Database.EnsureCreated();
+    
     var aircraftTypesImport = new AircraftTypeImporter(aircraftTypeContext);
     // Imports all aircraft types (or skips it, depending on if it exists in the db already)
     aircraftTypesImport.ImportAll();
 
 }
-
 
 app.Run();
