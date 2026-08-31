@@ -6,13 +6,12 @@ namespace airlineRider.Utils;
 public class AircraftTypeImporterUtils
 {
 
-    public static LiveryInfo ParseLiveryInfo(JsonElement element)
+    public static LiveryInfo ParseLiveryInfo(JsonElement element,AircraftType type)
     {
-        if (element.TryGetProperty("imageAssets", out var infoElement))
-        {
-            return new LiveryInfo(infoElement.GetProperty("workPath").ToString(),
-                infoElement.GetProperty("preview").ToString());
-        }
-        return new LiveryInfo("...","...");
+        
+        LiveryInfo info = new LiveryInfo();
+        info.WorkDir = element.GetProperty("imageAssets").GetProperty("workPath").ToString();
+        info.AircraftTypeId = type.Id;
+        return info;
     }
 }
