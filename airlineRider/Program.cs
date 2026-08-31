@@ -6,6 +6,13 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+// DBContext for Aircraft types.
+builder.Services.AddDbContext<AircraftTypeContext>(opt =>
+{
+    opt.UseMongoDB(mongoClient, "airlineRider");
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
