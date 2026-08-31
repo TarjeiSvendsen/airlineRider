@@ -1,13 +1,16 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace airlineRider.Models;
 
-[PrimaryKey("_id")]
+[PrimaryKey("Id")]
 public class AircraftType
 {
     [MaxLength(36)]
-    public string _id { get; set; }
+    [Column(TypeName = "uuid")]
+    public Guid Id { get; set; }
     
     [MaxLength(30)]
     public string Model { get; set; }
@@ -21,21 +24,20 @@ public class AircraftType
     [MaxLength(200)]
     public string Description { get; set; }
     
-    public LiveryInfo LiveryInfo { get; set; }
+    
+    public virtual LiveryInfo LiveryInfo { get; set; }
 
     public AircraftType()
     {
-        this._id = Guid.CreateVersion7().ToString();
         this.Model = "";
         this.Iata = "XXX";
         this.Icao = "XXXX";
         this.Manufacturer = "Default";
         this.Description = "...";
-        this.LiveryInfo = new LiveryInfo("null","null");
+        
     }
     public AircraftType(string model, string iata, string icao,string manufacturer,LiveryInfo liveryInfo,string description)
     {
-        this._id = Guid.CreateVersion7().ToString();
         this.Model = model;
         this.Iata = iata;
         this.Icao = icao;
@@ -45,4 +47,16 @@ public class AircraftType
     }
 }
 
-public record LiveryInfo(string WorkPath,string Preview){}
+[PrimaryKey("LiveryInfoId")]
+public class LiveryInfo
+{
+    [ForeignKey("AircraftType")] 
+    [Column(TypeName = "uuid")]
+    public Guid LiveryInfoId;
+    public string WorkDir { get; set; }
+    
+    [Column(TypeName = "uuid")]
+    public Guid AircraftTypeId { get; set; }
+    [JsonIgnore]
+    public virtual AircraftType AircraftType { get; set; }
+}

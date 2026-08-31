@@ -21,12 +21,13 @@ public class AircraftTypeImporter(AircraftTypeContext typeContext)
             var file = File.ReadAllTextAsync(fileName);
             var element = JsonElement.Parse(file.Result);
             var aircraftType = new AircraftType();
+            aircraftType.Id = Guid.CreateVersion7();
             aircraftType.Model = element.GetProperty("model").ToString();
             aircraftType.Iata = element.GetProperty("iata").ToString();
             aircraftType.Icao = element.GetProperty("icao").ToString();
             aircraftType.Manufacturer = element.GetProperty("manufacturer").ToString();
             aircraftType.Description = element.GetProperty("description").ToString();
-            aircraftType.LiveryInfo = AircraftTypeImporterUtils.ParseLiveryInfo(element);
+            aircraftType.LiveryInfo = AircraftTypeImporterUtils.ParseLiveryInfo(element,aircraftType);
             typeContext.AircraftTypes.Add(aircraftType);
         }
 
