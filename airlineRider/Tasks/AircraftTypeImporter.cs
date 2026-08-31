@@ -13,7 +13,7 @@ public class AircraftTypeImporter
         TypeContext = typeContext;
     }
 
-    public void ImportAll()
+    public async void ImportAll()
     {
         if (TypeContext.AircraftTypes.Count() >= 1)
         {
@@ -24,8 +24,8 @@ public class AircraftTypeImporter
         var files = Directory.GetFiles("Resources/Aircraft/","*.json",SearchOption.AllDirectories);
         foreach (var fileName in files)
         {
-            var file = File.ReadAllTextAsync(fileName);
-            var element = JsonElement.Parse(file.Result);
+            var file = await File.ReadAllTextAsync(fileName);
+            var element = JsonElement.Parse(file);
             var aircraftType = new AircraftType();
             aircraftType.Model = element.GetProperty("model").ToString();
             aircraftType.Iata = element.GetProperty("iata").ToString();
