@@ -7,31 +7,40 @@ namespace airlineRider.Models;
 public class AircraftType
 {
     
-    public Guid Id { get; set; }
+    public Guid Id { get; }
     
     [MaxLength(30)]
     public string Model { get; set; }
     [MaxLength(4)]
-    public string? Iata { get; set; }
+    public string Iata { get; set; }
     [MaxLength(4)]
-    public string? Icao { get; set; }
+    public string Icao { get; set; }
     [MaxLength(100)]
     public string Manufacturer { get; set; }
     
-    public LiveryInfo? LiveryInfo { get; set; }
-
+    [MaxLength(200)]
+    public string Description { get; set; }
+    
+    public LiveryInfo LiveryInfo { get; set; }
 
     public AircraftType()
     {
-        
+        this.Id = Guid.CreateVersion7();
+        this.Model = "";
+        this.Iata = "XXX";
+        this.Icao = "XXXX";
+        this.Manufacturer = "Default";
+        this.Description = "...";
+        this.LiveryInfo = new LiveryInfo("null","null");
     }
-    public AircraftType(String model, String iata, String icao,String manufacturer,LiveryInfo liveryInfo)
+    public AircraftType(string model, string iata, string icao,string manufacturer,LiveryInfo liveryInfo,string description)
     {
         this.Id = Guid.CreateVersion7();
         this.Model = model;
         this.Iata = iata;
         this.Icao = icao;
         this.Manufacturer = manufacturer;
+        this.Description = description;
         this.LiveryInfo = liveryInfo;
     }
 }
