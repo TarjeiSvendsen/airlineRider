@@ -4,18 +4,12 @@ using airlineRider.Utils;
 
 namespace airlineRider.Tasks;
 
-public class AircraftTypeImporter
+public class AircraftTypeImporter(AircraftTypeContext typeContext)
 {
-    private AircraftTypeContext TypeContext { get; set; }
-
-    public AircraftTypeImporter(AircraftTypeContext typeContext)
-    {
-        TypeContext = typeContext;
-    }
 
     public void ImportAll()
     {
-        if (TypeContext.AircraftTypes.Count() >= 1)
+        if (typeContext.AircraftTypes.Count() >= 1)
         {
             Console.WriteLine("Skipping Import");
             return;
@@ -31,10 +25,11 @@ public class AircraftTypeImporter
             aircraftType.Iata = element.GetProperty("iata").ToString();
             aircraftType.Icao = element.GetProperty("icao").ToString();
             aircraftType.Manufacturer = element.GetProperty("manufacturer").ToString();
+            aircraftType.Description = element.GetProperty("description").ToString();
             aircraftType.LiveryInfo = AircraftTypeImporterUtils.ParseLiveryInfo(element);
-            TypeContext.AircraftTypes.Add(aircraftType);
+            typeContext.AircraftTypes.Add(aircraftType);
         }
 
-        TypeContext.SaveChanges();
+        typeContext.SaveChanges();
     }
 }
