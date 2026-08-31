@@ -13,6 +13,6 @@ public class AircraftTypeImporterUtils
             return new LiveryInfo(infoElement.GetProperty("workPath").ToString(),
                 infoElement.GetProperty("preview").ToString());
         }
-        return null;
+        return new LiveryInfo("...","...");
     }
 }

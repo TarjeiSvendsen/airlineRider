@@ -9,7 +9,7 @@ public class AircraftTypeImporter(AircraftTypeContext typeContext)
 
     public void ImportAll()
     {
-        if (typeContext.AircraftTypes.Count() >= 1)
+        if (typeContext.AircraftTypes.Any())
         {
             Console.WriteLine("Skipping Import");
             return;

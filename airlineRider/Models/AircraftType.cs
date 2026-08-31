@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace airlineRider.Models;
 
-[PrimaryKey("Id")]
+[PrimaryKey("_id")]
 public class AircraftType
 {
-    
-    public Guid Id { get; }
+    [MaxLength(36)]
+    public string _id { get; set; }
     
     [MaxLength(30)]
     public string Model { get; set; }
@@ -25,7 +25,7 @@ public class AircraftType
 
     public AircraftType()
     {
-        this.Id = Guid.CreateVersion7();
+        this._id = Guid.CreateVersion7().ToString();
         this.Model = "";
         this.Iata = "XXX";
         this.Icao = "XXXX";
@@ -35,7 +35,7 @@ public class AircraftType
     }
     public AircraftType(string model, string iata, string icao,string manufacturer,LiveryInfo liveryInfo,string description)
     {
-        this.Id = Guid.CreateVersion7();
+        this._id = Guid.CreateVersion7().ToString();
         this.Model = model;
         this.Iata = iata;
         this.Icao = icao;
