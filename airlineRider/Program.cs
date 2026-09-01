@@ -9,7 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 var logfactory = new LoggerFactory();
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 
 // DBContext for Aircraft types.
@@ -19,7 +18,9 @@ builder.Services.AddDbContextPool<AircraftTypeContext>(opt =>
 builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6380"));
 
 // Automapper config
-builder.Services.AddSingleton<MapperConfiguration>(new MapperConfiguration(cfg => cfg.CreateMap<AircraftType, AircraftTypePublicDto>(),logfactory));
+builder.Services.AddSingleton(logfactory);
+builder.Services.AddSingleton(new MapperConfiguration(cfg => cfg.CreateMap<AircraftType, AircraftTypePublicDto>(),logfactory));
+
 
 builder.Services.AddScoped<AircraftTypeService>();
 
