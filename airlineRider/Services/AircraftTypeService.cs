@@ -10,7 +10,7 @@ namespace airlineRider.Services;
 public class AircraftTypeService(AircraftTypeContext typeContext,IConnectionMultiplexer muxer,MapperConfiguration mapperConfiguration)
 {
     private readonly IDatabase _redis = muxer.GetDatabase();
-    private IMapper _mapper = mapperConfiguration.CreateMapper();
+    private readonly IMapper _mapper = mapperConfiguration.CreateMapper();
     
     public List<AircraftTypePublicDto> GetAllAircraftTypes()
     {
