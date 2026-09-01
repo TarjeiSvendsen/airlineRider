@@ -27,6 +27,7 @@ public class AircraftTypeImporter(AircraftTypeContext typeContext)
             aircraftType.Icao = element.GetProperty("icao").ToString();
             aircraftType.Manufacturer = element.GetProperty("manufacturer").ToString();
             aircraftType.Description = element.GetProperty("description").ToString();
+            aircraftType.BodyType = element.GetProperty("bodyType").ToString();
             aircraftType.LiveryInfo = AircraftTypeImporterUtils.ParseLiveryInfo(element,aircraftType);
             typeContext.AircraftTypes.Add(aircraftType);
         }

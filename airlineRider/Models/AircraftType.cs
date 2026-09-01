@@ -14,7 +14,7 @@ public class AircraftType
     
     [MaxLength(30)]
     public string Model { get; set; }
-    [MaxLength(4)]
+    [MaxLength(3)]
     public string Iata { get; set; }
     [MaxLength(4)]
     public string Icao { get; set; }
@@ -24,8 +24,9 @@ public class AircraftType
     [MaxLength(200)]
     public string Description { get; set; }
     
+    public string BodyType { get; set; }
     
-    public virtual LiveryInfo LiveryInfo { get; set; }
+    public LiveryInfo LiveryInfo { get; set; }
 
     public AircraftType()
     {
@@ -58,5 +59,5 @@ public class LiveryInfo
     [Column(TypeName = "uuid")]
     public Guid AircraftTypeId { get; set; }
     [JsonIgnore]
-    public virtual AircraftType AircraftType { get; set; }
+    public AircraftType AircraftType { get; set; }
 }
