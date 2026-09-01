@@ -1,9 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using airlineRider.Models;
+using airlineRider.Services;
 using airlineRider.Tasks;
+using AutoMapper;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
+var logfactory = new LoggerFactory();
 
 // Add services to the container.
 
@@ -14,6 +17,11 @@ builder.Services.AddDbContextPool<AircraftTypeContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6380"));
+
+// Automapper config
+builder.Services.AddSingleton<MapperConfiguration>(new MapperConfiguration(cfg => cfg.CreateMap<AircraftType, AircraftTypePublicDto>(),logfactory));
+
+builder.Services.AddScoped<AircraftTypeService>();
 
 var app = builder.Build();
 
