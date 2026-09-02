@@ -1,0 +1,11 @@
+{
+  "model": "A220-300",
+  "iata": "223",
+  "icao": "BCS3",
+  "manufacturer": "Airbus",
+  "description": "...",
+  "bodyType": "Narrowbody",
+  "imageAssets": {
+    "workPath": "Resources/Aircraft/Airbus/A220/300"
+  }
+}

@@ -1,0 +1,9 @@
+## Jetbrains FIles
+.idea/
+
+## Secrets
+.env
+
+
+## Large Files
+Resources/Airports/

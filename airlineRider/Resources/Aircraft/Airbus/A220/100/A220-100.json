@@ -1,0 +1,11 @@
+{
+  "model": "A220-100",
+  "iata": "221",
+  "icao": "BCS1",
+  "manufacturer": "Airbus",
+  "description": "...",
+  "bodyType": "Narrowbody",
+  "imageAssets": {
+    "workPath": "Resources/Aircraft/Airbus/A220/100"
+  }
+}
