@@ -1,6 +1,7 @@
+using airlineRider.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace airlineRider.Models;
+namespace airlineRider.DAL;
 
 public class AircraftTypeContext : DbContext
 {
