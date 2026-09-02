@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+  redis:
+    image: redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
