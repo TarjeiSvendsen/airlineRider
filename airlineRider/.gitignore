@@ -1,9 +1,9 @@
 ## Jetbrains FIles
-../.idea/
+.idea/
 
 ## Secrets
 .env
 
 
 ## Large Files
-./Resources/Airports/
+Resources/Airports/
