@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace airlineRider.Models;
 
@@ -36,8 +37,8 @@ public class Airport
     [MaxLength(2)]
     public string Alpha2CountryCode { get; set; }
     public double Elevation { get; set; }
-    public double Latitude { get; set; }
-    public double Longitude { get; set; }
     
+    public Point Location { get; set; }
     
+    public List<Runway> Runways { get; set; }
 }

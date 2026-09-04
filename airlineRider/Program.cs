@@ -14,7 +14,7 @@ builder.Services.AddControllers();
 
 // DBContext.
 builder.Services.AddDbContextPool<TypeContext>(opt => 
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),x=> x.UseNetTopologySuite()));
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6380"));
 
