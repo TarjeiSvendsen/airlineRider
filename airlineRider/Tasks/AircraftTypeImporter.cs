@@ -1,10 +1,11 @@
 using System.Text.Json;
+using airlineRider.DAL;
 using airlineRider.Models;
 using airlineRider.Utils;
 
 namespace airlineRider.Tasks;
 
-public class AircraftTypeImporter(AircraftTypeContext typeContext)
+public class AircraftTypeImporter(TypeContext typeContext)
 {
 
     public void ImportAll()

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using airlineRider.DAL;
 using airlineRider.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ using StackExchange.Redis;
 
 namespace airlineRider.Services;
 
-public class AircraftTypeService(AircraftTypeContext typeContext,IConnectionMultiplexer muxer,MapperConfiguration mapperConfiguration)
+public class AircraftTypeService(TypeContext typeContext,IConnectionMultiplexer muxer,MapperConfiguration mapperConfiguration)
 {
     private readonly IDatabase _redis = muxer.GetDatabase();
     private readonly IMapper _mapper = mapperConfiguration.CreateMapper();
