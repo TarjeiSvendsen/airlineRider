@@ -49,6 +49,12 @@ using (var serviceScope = app.Services.CreateScope())
     // Imports all aircraft types (or skips it, depending on if it exists in the db already)
     aircraftTypesImport.ImportAll();
 
+    var airportService = services.GetRequiredService<AirportService>();
+    
+    var airportImporter = new AirportImporter(airportService);
+    // Imports all airports (or skips it, depending on if it exists in the db already) and returns the amount of airports imported.
+    var savedAirports = await airportImporter.ImportAll();
+    
 }
 
 app.Run();
