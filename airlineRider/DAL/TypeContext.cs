@@ -11,5 +11,7 @@ public class TypeContext : DbContext
     public DbSet<AircraftType> AircraftTypes { get; set; } = null!;
     public DbSet<LiveryInfo> LiveryInfos { get; set; } = null!;
     public DbSet<Airport> Airports { get; set; } = null!;
+    public DbSet<Airport> Runways { get; set; } = null!;
+
 
 }
