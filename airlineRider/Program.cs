@@ -11,6 +11,7 @@ var logfactory = new LoggerFactory();
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddResponseCaching();
 
 // DBContext.
 builder.Services.AddDbContextPool<TypeContext>(opt => 
@@ -31,6 +32,7 @@ var app = builder.Build();
 
 
 app.UseHttpsRedirection();
+app.UseResponseCaching();
 
 app.UseAuthorization();
 
