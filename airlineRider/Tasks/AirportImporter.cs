@@ -15,6 +15,11 @@ public class AirportImporter(AirportService service)
      */
     public async Task<int> ImportAll()
     {
+        if (service.AirportsExistInDb())
+        {
+            return 0;
+        }
+        
         var airportMap = new Dictionary<String,Airport>();
         var stream = new FileStream("Resources/Airports/airports.csv",FileMode.Open);
         var streamReader = new StreamReader(stream);
