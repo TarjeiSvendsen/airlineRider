@@ -23,6 +23,8 @@ public class AirportImporter(AirportService service)
         var airportMap = new Dictionary<String,Airport>();
         var stream = new FileStream("Resources/Airports/airports.csv",FileMode.Open);
         var streamReader = new StreamReader(stream);
+        streamReader.ReadLine(); // Skips headers
+        
         string line;
         while ((line = streamReader.ReadLine()) != null)
         {
@@ -76,6 +78,7 @@ public class AirportImporter(AirportService service)
 
         var runwayStream = new FileStream("Resources/Airports/runways.csv",FileMode.Open);
         var runwayStreamReader = new StreamReader(runwayStream);
+        runwayStreamReader.ReadLine(); // Skips headers
         string rLine;
         while ((rLine = runwayStreamReader.ReadLine()) != null)
         {
