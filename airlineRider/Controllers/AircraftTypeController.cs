@@ -17,6 +17,7 @@ public class AircraftTypeController(AircraftTypeService aircraftTypeService) : C
 
     [HttpGet("{aircraftType}/details")]
     [Produces("application/json")]
+    [ResponseCache(VaryByHeader = "User-Agent", Duration = 36000)]
     public async Task<IActionResult> GetDetails([FromRoute] string aircraftType)
     {
         try
@@ -35,6 +36,7 @@ public class AircraftTypeController(AircraftTypeService aircraftTypeService) : C
     
     [HttpGet("{aircraftType}/preview")]
     [Produces("image/png")]
+    [ResponseCache(VaryByHeader = "User-Agent", Duration = 36000)]
     public async Task<IActionResult> GetImage([FromRoute] string aircraftType)
     {
         try
