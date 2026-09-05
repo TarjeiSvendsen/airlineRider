@@ -10,6 +10,7 @@ public class AircraftType
 {
     [MaxLength(36)]
     [Column(TypeName = "uuid")]
+    [JsonIgnore]
     public Guid Id { get; set; }
     
     [MaxLength(30)]
