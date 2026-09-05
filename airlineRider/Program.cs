@@ -26,6 +26,8 @@ builder.Services.AddSingleton(new MapperConfiguration(cfg => cfg.CreateMap<Aircr
 
 builder.Services.AddScoped<AircraftTypeService>();
 builder.Services.AddScoped<AirportService>();
+builder.Services.AddScoped<CountryService>();
+
 
 
 var app = builder.Build();
@@ -56,7 +58,14 @@ using (var serviceScope = app.Services.CreateScope())
     var airportImporter = new AirportImporter(airportService);
     // Imports all airports (or skips it, depending on if it exists in the db already) and returns the amount of airports imported.
     var savedAirports = await airportImporter.ImportAll();
-    
+
+    // 
+    var countryService = services.GetRequiredService<CountryService>();
+
+    var countryImporter = new CountryImporter(countryService);
+
+    var savedCountries = await countryImporter.ImportAll();
+
 }
 
 app.Run();
