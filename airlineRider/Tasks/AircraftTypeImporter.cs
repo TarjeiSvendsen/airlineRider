@@ -5,7 +5,7 @@ using airlineRider.Utils;
 
 namespace airlineRider.Tasks;
 
-public class AircraftTypeImporter(AircraftTypeContext typeContext)
+public class AircraftTypeImporter(TypeContext typeContext)
 {
 
     public void ImportAll()

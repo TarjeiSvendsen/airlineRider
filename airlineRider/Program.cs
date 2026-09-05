@@ -11,10 +11,11 @@ var logfactory = new LoggerFactory();
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddResponseCaching();
 
-// DBContext for Aircraft types.
-builder.Services.AddDbContextPool<AircraftTypeContext>(opt => 
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+// DBContext.
+builder.Services.AddDbContextPool<TypeContext>(opt => 
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),x=> x.UseNetTopologySuite()));
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6380"));
 
@@ -24,11 +25,14 @@ builder.Services.AddSingleton(new MapperConfiguration(cfg => cfg.CreateMap<Aircr
 
 
 builder.Services.AddScoped<AircraftTypeService>();
+builder.Services.AddScoped<AirportService>();
+
 
 var app = builder.Build();
 
 
 app.UseHttpsRedirection();
+app.UseResponseCaching();
 
 app.UseAuthorization();
 
@@ -38,15 +42,21 @@ using (var serviceScope = app.Services.CreateScope())
 {
     var services = serviceScope.ServiceProvider;
     
-    var aircraftTypeContext = services.GetRequiredService<AircraftTypeContext>();
+    var typeContext = services.GetRequiredService<TypeContext>();
     
-    aircraftTypeContext.Database.EnsureDeleted(); // Temporarily here as I constantly change the schema.
-    aircraftTypeContext.Database.EnsureCreated();
+    typeContext.Database.EnsureDeleted(); // Temporarily here as I constantly change the schema.
+    typeContext.Database.EnsureCreated();
     
-    var aircraftTypesImport = new AircraftTypeImporter(aircraftTypeContext);
+    var aircraftTypesImport = new AircraftTypeImporter(typeContext);
     // Imports all aircraft types (or skips it, depending on if it exists in the db already)
     aircraftTypesImport.ImportAll();
 
+    var airportService = services.GetRequiredService<AirportService>();
+    
+    var airportImporter = new AirportImporter(airportService);
+    // Imports all airports (or skips it, depending on if it exists in the db already) and returns the amount of airports imported.
+    var savedAirports = await airportImporter.ImportAll();
+    
 }
 
 app.Run();
