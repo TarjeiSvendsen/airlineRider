@@ -11,12 +11,15 @@ public class SystemUser
     public string Username { get; set; }
     public string Email { get; set; }
     public string HashedPassword { get; set; }
+    
+    public string[] Roles { get; set; }
 
 
-    public SystemUser(string username,string email,string hashedPassword)
+    public SystemUser(string username,string email,string hashedPassword,string[] roles)
     {
         this.Username = username;
         this.Email = email;
         this.HashedPassword = hashedPassword;
+        this.Roles = roles;
     }
 }
