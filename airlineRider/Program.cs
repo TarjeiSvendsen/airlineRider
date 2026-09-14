@@ -1,9 +1,12 @@
+using System.Text;
 using airlineRider.DAL;
 using Microsoft.EntityFrameworkCore;
 using airlineRider.Models;
 using airlineRider.Services;
 using airlineRider.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +22,23 @@ builder.Services.AddDbContextPool<TypeContext>(opt =>
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6380"));
 
+
+// JWT Authentication 
+builder.Services.AddAuthentication(cfg => {
+    cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    cfg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    cfg.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x => {
+    x.SaveToken = false;
+    x.TokenValidationParameters = new TokenValidationParameters {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8
+                .GetBytes(builder.Configuration["JWTKey:Secret"]!)
+        )
+    };
+});
+
 // Automapper config
 builder.Services.AddSingleton(logfactory);
 builder.Services.AddSingleton(new MapperConfiguration(cfg => cfg.CreateMap<AircraftType, AircraftTypePublicDto>(),logfactory));
@@ -27,6 +47,7 @@ builder.Services.AddSingleton(new MapperConfiguration(cfg => cfg.CreateMap<Aircr
 builder.Services.AddScoped<AircraftTypeService>();
 builder.Services.AddScoped<AirportService>();
 builder.Services.AddScoped<CountryService>();
+builder.Services.AddScoped<UserService>();
 
 
 
@@ -36,6 +57,7 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseResponseCaching();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
