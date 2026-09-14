@@ -1,9 +1,9 @@
-using System.Data.Entity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using airlineRider.DAL;
 using airlineRider.Models.Auth;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace airlineRider.Services;
@@ -15,7 +15,7 @@ public class UserService(TypeContext typeContext,IConfiguration config)
     
     public async Task<TokenResponse?> LoginAsync(LoginRequest request)
     {
-        var user = typeContext.Users
+        var user = typeContext.Users.Include(u => u.Roles)
             .FirstOrDefault(u => u.Username == request.Username);
 
         if (user == null ||
