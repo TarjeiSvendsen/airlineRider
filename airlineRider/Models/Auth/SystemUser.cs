@@ -12,14 +12,26 @@ public class SystemUser
     public string Email { get; set; }
     public string HashedPassword { get; set; }
     
-    public string[] Roles { get; set; }
+    public List<UserRole> Roles { get; set; }
+
+    
+}
 
 
-    public SystemUser(string username,string email,string hashedPassword,string[] roles)
+[PrimaryKey("Id")]
+public class UserRole
+{
+    [Column(TypeName = "uuid")]
+    public Guid Id { get; set; }   
+    public string Role { get; set; }
+    
+    [Column(TypeName = "uuid")]
+    public Guid SystemUserId { get; set; }
+    public SystemUser SystemUser { get; set; } = null!;
+
+    public UserRole(string role)
     {
-        this.Username = username;
-        this.Email = email;
-        this.HashedPassword = hashedPassword;
-        this.Roles = roles;
+        Role = role;
     }
+
 }

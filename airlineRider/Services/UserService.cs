@@ -43,7 +43,12 @@ public class UserService(TypeContext typeContext,IConfiguration config)
         }
 
         var hashPassword = BCrypt.Net.BCrypt.HashPassword(user.password);
-        typeContext.Users.Add(new SystemUser(user.username,user.email,hashPassword,new []{"ROLE_USER"}));
+        SystemUser newUser = new SystemUser();
+        newUser.Username = user.username;
+        newUser.Email = user.email;
+        newUser.HashedPassword = hashPassword;
+        newUser.Roles = new List<UserRole>{ new("ROLE_USER") };
+        typeContext.Users.Add(newUser);
         await typeContext.SaveChangesAsync();
         return new UserSignupSuccessDto(user.email,user.username);
     }
@@ -58,12 +63,9 @@ public class UserService(TypeContext typeContext,IConfiguration config)
         claimList.Add(new Claim(JwtRegisteredClaimNames.Name, user.Username));
         claimList.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
         claimList.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
-        
-        foreach (string role in user.Roles)
-        {
-            claimList.Add(new Claim(ClaimTypes.Role,role));
-        }
-        
+
+        claimList.AddRange(user.Roles.Select(role => new Claim(ClaimTypes.Role, role.Role)));
+
         var creds = new SigningCredentials(
             new SymmetricSecurityKey(key),
             SecurityAlgorithms.HmacSha256);

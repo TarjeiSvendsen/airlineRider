@@ -12,10 +12,11 @@ public class TypeContext : DbContext
     public DbSet<AircraftType> AircraftTypes { get; set; } = null!;
     public DbSet<LiveryInfo> LiveryInfos { get; set; } = null!;
     public DbSet<Airport> Airports { get; set; } = null!;
-    public DbSet<Airport> Runways { get; set; } = null!;
+    public DbSet<Runway> Runways { get; set; } = null!;
     public DbSet<Country> Countries { get; set; } = null!;
     
     public DbSet<SystemUser> Users { get; set; } = null!;
+    public DbSet<UserRole> UserRoles { get; set; } = null!; 
     public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
 
 }
