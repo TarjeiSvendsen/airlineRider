@@ -1,9 +1,11 @@
 using System.Text.Json;
 using airlineRider.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace airlineRider.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("/api/aircraft/type")]
 public class AircraftTypeController(AircraftTypeService aircraftTypeService) : ControllerBase
