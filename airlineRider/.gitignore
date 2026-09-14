@@ -1,9 +1,15 @@
 ## Jetbrains FIles
-/.idea/.idea.airlineRider/.idea/*
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+
 ## Secrets
 .env
 
 
 ## Large Files
 Resources/Airports/
+Resources/Various/*
 Resources/Aircraft/**/*.psd
