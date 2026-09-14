@@ -43,7 +43,7 @@ public class UserService(TypeContext typeContext,IConfiguration config)
         }
 
         var hashPassword = BCrypt.Net.BCrypt.HashPassword(user.password);
-        typeContext.Users.Add(new SystemUser(user.username,user.email,hashPassword,new []{"ADMIN"}));
+        typeContext.Users.Add(new SystemUser(user.username,user.email,hashPassword,new []{"ROLE_USER"}));
         await typeContext.SaveChangesAsync();
         return new UserSignupSuccessDto(user.email,user.username);
     }
@@ -52,16 +52,18 @@ public class UserService(TypeContext typeContext,IConfiguration config)
     private string GenerateAccessToken(SystemUser user)
     {
         var key = Encoding.UTF8.GetBytes(_jwtKeySection.GetValue<string>("Secret")!);
-
-        var claims = new[]
+        var claimList = new List<Claim>();
+        
+        claimList.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()));
+        claimList.Add(new Claim(JwtRegisteredClaimNames.Name, user.Username));
+        claimList.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+        claimList.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+        
+        foreach (string role in user.Roles)
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Name, user.Username),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Role,user.Roles[0])
-        };
-
+            claimList.Add(new Claim(ClaimTypes.Role,role));
+        }
+        
         var creds = new SigningCredentials(
             new SymmetricSecurityKey(key),
             SecurityAlgorithms.HmacSha256);
@@ -69,7 +71,7 @@ public class UserService(TypeContext typeContext,IConfiguration config)
         var token = new JwtSecurityToken(
             issuer: _jwtKeySection.GetValue<string>("ValidIssuer"),
             audience: _jwtKeySection.GetValue<string>("ValidAudience"),
-            claims: claims,
+            claims: claimList,
             expires: DateTime.UtcNow.AddHours(double.Parse(_jwtKeySection.GetValue<string>("TokenExpiryTimeInHour")!)),
             signingCredentials: creds);
 
