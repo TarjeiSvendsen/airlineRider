@@ -34,10 +34,9 @@ public class AirportService(TypeContext typeContext,IConnectionMultiplexer muxer
     }
     public async Task<int> SaveCollection(List<Airport> airports)
     {
-        foreach (Airport airport in airports)
+        foreach (var airportDto in airports.Select(airport => new AirportRedisDto(airport.Name,airport.AType,airport.Icao,airport.Iata,airport.Location.Y,airport.Location.X)))
         {
-            var airportDto = new AirportRedisDto(airport.Name,airport.AType,airport.Icao,airport.Iata,airport.Location.Y,airport.Location.X);
-            _redis.GeoAdd(new RedisKey("airports:geo"), new GeoEntry(airportDto.Longitude,airportDto.Latitude,new RedisValue(JsonSerializer.Serialize(airportDto))));
+            await _redis.GeoAddAsync(new RedisKey("airports:geo"), new GeoEntry(airportDto.Longitude,airportDto.Latitude,new RedisValue(JsonSerializer.Serialize(airportDto))));
         }
         await typeContext.Airports.AddRangeAsync(airports);
         return await typeContext.SaveChangesAsync();
