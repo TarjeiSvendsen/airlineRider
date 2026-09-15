@@ -10,17 +10,27 @@ namespace airlineRider.Services;
 public class LobbyService(TypeContext typeContext,IConnectionMultiplexer muxer,LoggerFactory loggerFactory)
 {
     private readonly IDatabase _redis = muxer.GetDatabase();
-    private readonly IMapper _publicDtomapper = new MapperConfiguration(cfg => cfg.CreateMap<Lobby, LobbyPublicDto>(),loggerFactory).CreateMapper();
-    private readonly IMapper _publicDetailDtomapper = new MapperConfiguration(cfg => cfg.CreateMap<Lobby, LobbyPublicDetailDto>(),loggerFactory).CreateMapper();
+    private readonly IMapper _publicDtoMapper = new MapperConfiguration(cfg => cfg.CreateMap<Lobby, LobbyPublicDto>(),loggerFactory).CreateMapper();
+    private readonly IMapper _publicDetailDtoMapper = new MapperConfiguration(cfg => cfg.CreateMap<Lobby, LobbyPublicDetailDto>(),loggerFactory).CreateMapper();
 
 
     /**
      * May return null if lobby by the specified id is not found.
      */
+    
     public LobbyPublicDetailDto? GetPublicLobbyDetailById(int lobbyId)
     {
-        var lobby = typeContext.Lobbies.Include(l => l.LobbyMembers).FirstOrDefault(lo => lo.Id == lobbyId);
-        return lobby is null ? null : _publicDetailDtomapper.Map<LobbyPublicDetailDto>(lobby);
+        var redisResult = _redis.StringGet(new RedisKey("lobby:" + lobbyId));
+        if (redisResult.IsNull)
+        {
+            var lobby = typeContext.Lobbies.Include(l => l.LobbyMembers).FirstOrDefault(lo => lo.Id == lobbyId);
+            return lobby is null ? null : _publicDetailDtoMapper.Map<LobbyPublicDetailDto>(lobby);
+        }
+        else
+        {
+            var lobby = JsonSerializer.Deserialize<Lobby>(redisResult.ToString());
+            return _publicDetailDtoMapper.Map<LobbyPublicDetailDto>(lobby);
+        }
     }
 
     public void AddAirlineToLobby(int lobbyId,Airline airline)
@@ -36,7 +46,7 @@ public class LobbyService(TypeContext typeContext,IConnectionMultiplexer muxer,L
      */
     public List<LobbyPublicDto> GetPublicLobbies()
     {
-        return typeContext.Lobbies.Where(lobby => lobby.IsPublic).ToList().ConvertAll(input => _publicDtomapper.Map<LobbyPublicDto>(input));
+        return typeContext.Lobbies.Where(lobby => lobby.IsPublic).ToList().ConvertAll(input => _publicDtoMapper.Map<LobbyPublicDto>(input));
     }
     
     /**
@@ -65,7 +75,7 @@ public class LobbyService(TypeContext typeContext,IConnectionMultiplexer muxer,L
         
         typeContext.Lobbies.Add(lobby);
         typeContext.SaveChanges();
-        _redis.StringSet("lobby:"+lobby.Id,JsonSerializer.Serialize(new LobbyPublicDto(lobby.Name,"",lobby.IsPublic)));
+        _redis.StringSet("lobby:"+lobby.Id,JsonSerializer.Serialize(_publicDetailDtoMapper.Map<LobbyPublicDetailDto>(lobby)));
         
         return lobby;
     }
@@ -75,4 +85,4 @@ public record LobbyCreationDto(string Name,string Slug,string Description,string
 
 public record LobbyCreationSettingsDto(string StarterAircraftType,int StarterAircraftAmount,int StartingMoney,DateOnly StartDate,DateOnly EndDate);
 public record LobbyPublicDto(string Name,string Description,bool IsPublic);
-public record LobbyPublicDetailDto(string Name,string Slug,bool IsPublic,List<Airline> LobbyMembers);
+public record LobbyPublicDetailDto(string Name,string Slug,bool IsPublic,List<Airline> LobbyMembers,LobbySettings Settings,LobbyStarterAircraft StarterAircraftDetails);

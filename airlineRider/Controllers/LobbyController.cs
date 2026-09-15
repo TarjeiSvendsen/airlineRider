@@ -13,6 +13,7 @@ public class LobbyController(LobbyService lobbyService): ControllerBase
     
     [HttpGet]
     [Route("lobby/{lobbyId}/details")]
+    [ResponseCache(VaryByHeader = "User-Agent", Duration = 30)]
     public IActionResult GetPublicLobbyDetail([FromRoute] int lobbyId)
     {
         var lobby = lobbyService.GetPublicLobbyDetailById(lobbyId);
@@ -27,7 +28,6 @@ public class LobbyController(LobbyService lobbyService): ControllerBase
     [Route("lobbies/public")]
     public IActionResult GetPublicLobbies()
     {
-        
         Console.WriteLine(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         return Ok(lobbyService.GetPublicLobbies());
     }
