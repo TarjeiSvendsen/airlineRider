@@ -52,8 +52,13 @@ public class LobbyService(TypeContext typeContext,IConnectionMultiplexer muxer,L
         Lobby lobby = new Lobby
         {
             Name = dto.name,
+            Description = dto.description,
             IsPublic = dto.isPublic,
-            AccessCode = dto.password
+            AccessCode = dto.password,
+            Details = new LobbyDetails(dto.Settings.startDate.ToDateTime(new TimeOnly(1,0))),
+            Settings = new LobbySettings(dto.Settings.startDate,dto.Settings.endDate,dto.Settings.startingMoney),
+            StarterAircraftDetails = new LobbyStarterAircraft(dto.Settings.starterAircraftType,dto.Settings.starterAircraftAmount)
+            
         };
         
         typeContext.Add(lobby);
@@ -66,6 +71,6 @@ public class LobbyService(TypeContext typeContext,IConnectionMultiplexer muxer,L
 
 public record LobbyCreationDto(string name,string description,string password,bool isPublic,LobbyCreationSettingsDto Settings);
 
-public record LobbyCreationSettingsDto(List<string> starterAircraftTypes,int starterAircraftAmountPerType,int startingMoney,DateTime startDate,DateTime endDate);
+public record LobbyCreationSettingsDto(string starterAircraftType,int starterAircraftAmount,int startingMoney,DateOnly startDate,DateOnly endDate);
 public record LobbyPublicDto(string Name,string Description,bool IsPublic);
 public record LobbyPublicDetailDto(string Name,bool IsPublic,List<Airline> LobbyMembers);

@@ -18,12 +18,14 @@ public class Lobby
     
     public LobbyDetails Details { get; set; }
     public LobbySettings Settings { get; set; }
+    public LobbyStarterAircraft StarterAircraftDetails { get; set; }
     public List<Airline> LobbyMembers { get; set; }
-    
     
 }
 
 [ComplexType]
-public record LobbyDetails(DateTime currentTime);
+public record LobbyDetails(DateTime CurrentTime);
 [ComplexType]
-public record LobbySettings(DateOnly startDate,DateOnly endDate);
+public record LobbySettings(DateOnly StartDate,DateOnly EndDate,int StartingMoney);
+[ComplexType]
+public record LobbyStarterAircraft(string StarterAircraftTypeIcao,int StarterAircraftAmount);
