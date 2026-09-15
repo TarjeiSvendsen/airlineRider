@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace airlineRider.Models.Game;
 
 
 [PrimaryKey("Id")]
-[Index(nameof(AccessCode))]
 public class Lobby
 {
     public int Id { get; set; }
@@ -17,7 +17,13 @@ public class Lobby
     public string? AccessCode { get; set; }
     
     public LobbyDetails Details { get; set; }
+    public LobbySettings Settings { get; set; }
     public List<Airline> LobbyMembers { get; set; }
     
+    
 }
+
+[ComplexType]
 public record LobbyDetails(DateTime currentTime);
+[ComplexType]
+public record LobbySettings(DateOnly startDate,DateOnly endDate);
