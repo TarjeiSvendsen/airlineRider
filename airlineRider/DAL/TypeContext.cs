@@ -1,5 +1,6 @@
 using airlineRider.Models;
 using airlineRider.Models.Auth;
+using airlineRider.Models.Game;
 using Microsoft.EntityFrameworkCore;
 
 namespace airlineRider.DAL;
@@ -18,5 +19,8 @@ public class TypeContext : DbContext
     public DbSet<SystemUser> Users { get; set; } = null!;
     public DbSet<UserRole> UserRoles { get; set; } = null!; 
     public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
+    
+    public DbSet<Lobby> Lobbies { get; set; } = null!;
+    public DbSet<Airline> Airlines { get; set; } = null!;
 
 }

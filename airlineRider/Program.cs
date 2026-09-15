@@ -31,6 +31,8 @@ builder.Services.AddAuthentication(cfg => {
 }).AddJwtBearer(x => {
     x.SaveToken = false;
     x.TokenValidationParameters = new TokenValidationParameters {
+        ValidateAudience = false, // Just for testing
+        ValidateIssuer = false,
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8
@@ -48,11 +50,12 @@ builder.Services.AddScoped<AircraftTypeService>();
 builder.Services.AddScoped<AirportService>();
 builder.Services.AddScoped<CountryService>();
 builder.Services.AddScoped<UserService>();
-
+builder.Services.AddScoped<LobbyService>();
+builder.Services.AddScoped<AirlineService>();
 
 
 var app = builder.Build();
-
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 app.UseHttpsRedirection();
 app.UseResponseCaching();
@@ -69,7 +72,7 @@ using (var serviceScope = app.Services.CreateScope())
     var typeContext = services.GetRequiredService<TypeContext>();
     
     typeContext.Database.EnsureDeleted(); // Temporarily here as I constantly change the schema.
-    typeContext.Database.EnsureCreated();
+    typeContext.Database.EnsureCreated(); // Will be replaced by Migrations in prod...
     
     var aircraftTypesImport = new AircraftTypeImporter(typeContext);
     // Imports all aircraft types (or skips it, depending on if it exists in the db already)
@@ -87,6 +90,13 @@ using (var serviceScope = app.Services.CreateScope())
     var countryImporter = new CountryImporter(countryService);
 
     var savedCountries = await countryImporter.ImportAll();
+
+    var userService = services.GetRequiredService<UserService>();
+
+    if (app.Environment.IsDevelopment()) // Seeds database with test user credentials
+    {
+        await userService.SaveUser(new UserSignupDto("test@kvok.no", "test", "test"));
+    }
 
 }
 
