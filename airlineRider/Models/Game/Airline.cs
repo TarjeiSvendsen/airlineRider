@@ -32,6 +32,6 @@ public class Airline
 }
 
 [ComplexType]
-public record AirlineFinances(Int64 CurrentBalance);
+public record AirlineFinances(long CurrentBalance);
 [ComplexType]
 public record AircraftLease(int MonthlyCost,DateTime ContractStart,DateTime ContractEnd);
