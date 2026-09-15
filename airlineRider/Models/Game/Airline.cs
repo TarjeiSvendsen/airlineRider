@@ -12,9 +12,15 @@ public class Airline
 {
     [Column(TypeName = "uuid")]
     public Guid Id { get; set; }
-
+    
+    [MaxLength(4)]
+    public string Slug { get; set; }
+    
     [MaxLength(40)]
     public string Name { get; set; } = string.Empty;
+    
+    [MaxLength(40)]
+    public string Slogan { get; set; } = string.Empty;
     
     public int LobbyId { get; set; }
     public Lobby Lobby { get; set; }
