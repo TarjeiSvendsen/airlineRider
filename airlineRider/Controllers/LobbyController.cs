@@ -15,7 +15,7 @@ public class LobbyController(LobbyService lobbyService): ControllerBase
     [Route("lobby/{lobbyId}/details")]
     public IActionResult GetPublicLobbyDetail([FromRoute] int lobbyId)
     {
-        var lobby = lobbyService.GetPublicLobbyDetailBySlug(lobbyId);
+        var lobby = lobbyService.GetPublicLobbyDetailById(lobbyId);
         if (lobby is not null)
         {
             return Ok(lobby);

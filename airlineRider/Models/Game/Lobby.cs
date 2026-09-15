@@ -9,6 +9,7 @@ namespace airlineRider.Models.Game;
 public class Lobby
 {
     public int Id { get; set; }
+    public string Slug { get; set; }
     [MaxLength(40)] public string Name { get; set; } = string.Empty;
     [MaxLength(128)] public string? Description { get; set; } = string.Empty;
     public bool IsPublic { get; set; }
@@ -19,7 +20,7 @@ public class Lobby
     public LobbyDetails Details { get; set; }
     public LobbySettings Settings { get; set; }
     public LobbyStarterAircraft StarterAircraftDetails { get; set; }
-    public List<Airline> LobbyMembers { get; set; }
+    public List<Airline> LobbyMembers { get; set; } = [];
     
 }
 

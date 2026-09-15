@@ -10,16 +10,17 @@ namespace airlineRider.Services;
 public class LobbyService(TypeContext typeContext,IConnectionMultiplexer muxer,LoggerFactory loggerFactory)
 {
     private readonly IDatabase _redis = muxer.GetDatabase();
-    private readonly IMapper _mapper = new MapperConfiguration(cfg => cfg.CreateMap<Lobby, LobbyPublicDto>(),loggerFactory).CreateMapper();
+    private readonly IMapper _publicDtomapper = new MapperConfiguration(cfg => cfg.CreateMap<Lobby, LobbyPublicDto>(),loggerFactory).CreateMapper();
+    private readonly IMapper _publicDetailDtomapper = new MapperConfiguration(cfg => cfg.CreateMap<Lobby, LobbyPublicDetailDto>(),loggerFactory).CreateMapper();
 
 
     /**
      * May return null if lobby by the specified id is not found.
      */
-    public LobbyPublicDetailDto? TryGetPublicLobbyDetail(int lobbyId)
+    public LobbyPublicDetailDto? GetPublicLobbyDetailById(int lobbyId)
     {
         var lobby = typeContext.Lobbies.Include(l => l.LobbyMembers).FirstOrDefault(lo => lo.Id == lobbyId);
-        return lobby is null ? null : new LobbyPublicDetailDto(lobby.Name,lobby.IsPublic,lobby.LobbyMembers);
+        return lobby is null ? null : _publicDetailDtomapper.Map<LobbyPublicDetailDto>(lobby);
     }
 
     public void AddAirlineToLobby(int lobbyId,Airline airline)
@@ -35,7 +36,7 @@ public class LobbyService(TypeContext typeContext,IConnectionMultiplexer muxer,L
      */
     public List<LobbyPublicDto> GetPublicLobbies()
     {
-        return typeContext.Lobbies.Where(lobby => lobby.IsPublic).ToList().ConvertAll(input => _mapper.Map<LobbyPublicDto>(input));
+        return typeContext.Lobbies.Where(lobby => lobby.IsPublic).ToList().ConvertAll(input => _publicDtomapper.Map<LobbyPublicDto>(input));
     }
     
     /**
@@ -51,26 +52,27 @@ public class LobbyService(TypeContext typeContext,IConnectionMultiplexer muxer,L
     {
         Lobby lobby = new Lobby
         {
-            Name = dto.name,
-            Description = dto.description,
-            IsPublic = dto.isPublic,
-            AccessCode = dto.password,
-            Details = new LobbyDetails(dto.Settings.startDate.ToDateTime(new TimeOnly(1,0))),
-            Settings = new LobbySettings(dto.Settings.startDate,dto.Settings.endDate,dto.Settings.startingMoney),
-            StarterAircraftDetails = new LobbyStarterAircraft(dto.Settings.starterAircraftType,dto.Settings.starterAircraftAmount)
+            Slug = dto.Slug,
+            Name = dto.Name,
+            Description = dto.Description,
+            IsPublic = dto.IsPublic,
+            AccessCode = dto.Password,
+            Details = new LobbyDetails(dto.Settings.StartDate.ToDateTime(new TimeOnly(1,0))),
+            Settings = new LobbySettings(dto.Settings.StartDate,dto.Settings.EndDate,dto.Settings.StartingMoney),
+            StarterAircraftDetails = new LobbyStarterAircraft(dto.Settings.StarterAircraftType,dto.Settings.StarterAircraftAmount)
             
         };
         
-        typeContext.Add(lobby);
-        _redis.StringSet("lobby:"+dto.name,JsonSerializer.Serialize(new LobbyPublicDto(lobby.Name,"",lobby.IsPublic)));
-        
+        typeContext.Lobbies.Add(lobby);
         typeContext.SaveChanges();
+        _redis.StringSet("lobby:"+lobby.Id,JsonSerializer.Serialize(new LobbyPublicDto(lobby.Name,"",lobby.IsPublic)));
+        
         return lobby;
     }
 }
 
-public record LobbyCreationDto(string name,string description,string password,bool isPublic,LobbyCreationSettingsDto Settings);
+public record LobbyCreationDto(string Name,string Slug,string Description,string Password,bool IsPublic,LobbyCreationSettingsDto Settings);
 
-public record LobbyCreationSettingsDto(string starterAircraftType,int starterAircraftAmount,int startingMoney,DateOnly startDate,DateOnly endDate);
+public record LobbyCreationSettingsDto(string StarterAircraftType,int StarterAircraftAmount,int StartingMoney,DateOnly StartDate,DateOnly EndDate);
 public record LobbyPublicDto(string Name,string Description,bool IsPublic);
-public record LobbyPublicDetailDto(string Name,bool IsPublic,List<Airline> LobbyMembers);
+public record LobbyPublicDetailDto(string Name,string Slug,bool IsPublic,List<Airline> LobbyMembers);
