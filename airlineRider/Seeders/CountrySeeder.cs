@@ -2,9 +2,9 @@ using airlineRider.Models;
 using airlineRider.Services;
 using airlineRider.Utils;
 
-namespace airlineRider.Tasks;
+namespace airlineRider.Seeders;
 
-public class CountryImporter(CountryService countryService)
+public class CountrySeeder(CountryService countryService)
 {
 
     public async Task<int> ImportAll()

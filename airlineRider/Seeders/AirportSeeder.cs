@@ -3,9 +3,9 @@ using airlineRider.Services;
 using airlineRider.Utils;
 using NetTopologySuite.Geometries;
 
-namespace airlineRider.Tasks;
+namespace airlineRider.Seeders;
 
-public class AirportImporter(AirportService service)
+public class AirportSeeder(AirportService service)
 {
     public static HashSet<string> DisallowedTypes = 
         new HashSet<string>(){ "closed","heliport","balloonport","seaplane_base"};

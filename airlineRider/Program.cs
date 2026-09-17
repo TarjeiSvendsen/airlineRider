@@ -2,15 +2,15 @@ using System.Text;
 using airlineRider.DAL;
 using Microsoft.EntityFrameworkCore;
 using airlineRider.Models;
+using airlineRider.Seeders;
 using airlineRider.Services;
-using airlineRider.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
-var logfactory = new LoggerFactory();
+var logFactory = new LoggerFactory();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -21,7 +21,8 @@ builder.Services.AddDbContextPool<TypeContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),x=> x.UseNetTopologySuite()));
 
 var currentMode = Environment.GetEnvironmentVariable("DOTNET_CURRENT_MODE");
-if (currentMode != "TESTING" ) // This is necessary because I 
+if (currentMode != "TESTING" ) 
+    // This is necessary because you can't really remove singletons, once added, so this would conflict with the test singleton, therefore we check, and skip creating it if so.
     builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6380"));
 
 
@@ -44,8 +45,8 @@ builder.Services.AddAuthentication(cfg => {
 });
 
 // Automapper config
-builder.Services.AddSingleton(logfactory);
-builder.Services.AddSingleton(new MapperConfiguration(cfg => cfg.CreateMap<AircraftType, AircraftTypePublicDto>(),logfactory));
+builder.Services.AddSingleton(logFactory);
+builder.Services.AddSingleton(new MapperConfiguration(cfg => cfg.CreateMap<AircraftType, AircraftTypePublicDto>(),logFactory));
 
 
 builder.Services.AddScoped<AircraftTypeService>();
@@ -75,22 +76,22 @@ using (var serviceScope = app.Services.CreateScope())
     //typeContext.Database.EnsureDeleted(); // Temporarily here as I constantly change the schema.
     //typeContext.Database.EnsureCreated(); // Will be replaced by Migrations in prod...
     
-    var aircraftTypesImport = new AircraftTypeImporter(typeContext);
+    var aircraftTypesImport = new AircraftTypeSeeder(typeContext);
     // Imports all aircraft types (or skips it, depending on if it exists in the db already)
     aircraftTypesImport.ImportAll();
 
     var airportService = services.GetRequiredService<AirportService>();
     
-    var airportImporter = new AirportImporter(airportService);
+    var airportImporter = new AirportSeeder(airportService);
     // Imports all airports (or skips it, depending on if it exists in the db already) and returns the amount of airports imported.
-    var savedAirports = await airportImporter.ImportAll();
+    await airportImporter.ImportAll();
 
     // 
     var countryService = services.GetRequiredService<CountryService>();
 
-    var countryImporter = new CountryImporter(countryService);
+    var countryImporter = new CountrySeeder(countryService);
 
-    var savedCountries = await countryImporter.ImportAll();
+    await countryImporter.ImportAll();
 
     var userService = services.GetRequiredService<UserService>();
 

@@ -3,9 +3,9 @@ using airlineRider.DAL;
 using airlineRider.Models;
 using airlineRider.Utils;
 
-namespace airlineRider.Tasks;
+namespace airlineRider.Seeders;
 
-public class AircraftTypeImporter(TypeContext typeContext)
+public class AircraftTypeSeeder(TypeContext typeContext)
 {
 
     public void ImportAll()
