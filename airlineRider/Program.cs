@@ -20,7 +20,9 @@ builder.Services.AddResponseCaching();
 builder.Services.AddDbContextPool<TypeContext>(opt => 
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),x=> x.UseNetTopologySuite()));
 
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6380"));
+var currentMode = Environment.GetEnvironmentVariable("DOTNET_CURRENT_MODE");
+if (currentMode != "TESTING" ) // This is necessary because I 
+    builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6380"));
 
 
 // JWT Authentication 
@@ -55,7 +57,6 @@ builder.Services.AddScoped<AirlineService>();
 
 
 var app = builder.Build();
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 app.UseHttpsRedirection();
 app.UseResponseCaching();

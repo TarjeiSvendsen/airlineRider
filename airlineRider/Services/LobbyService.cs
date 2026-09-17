@@ -60,6 +60,10 @@ public class LobbyService(TypeContext typeContext,IConnectionMultiplexer muxer,L
 
     public Lobby CreateNewLobby(LobbyCreationDto dto)
     {
+        if (typeContext.Lobbies.Any(l => l.Slug == dto.Slug))
+        {
+            throw new ArgumentException("A lobby with this slug already exists");
+        }
         Lobby lobby = new Lobby
         {
             Slug = dto.Slug,
@@ -79,10 +83,18 @@ public class LobbyService(TypeContext typeContext,IConnectionMultiplexer muxer,L
         
         return lobby;
     }
+
+    public async Task<int> DeleteLobbyAsync(int lobbyId)
+    {
+        var lobby = new Lobby() { Id = lobbyId };
+        typeContext.Entry(lobby).State = EntityState.Deleted;
+        return await typeContext.SaveChangesAsync();
+        
+    }
 }
 
 public record LobbyCreationDto(string Name,string Slug,string Description,string Password,bool IsPublic,LobbyCreationSettingsDto Settings);
 
 public record LobbyCreationSettingsDto(string StarterAircraftType,int StarterAircraftAmount,int StartingMoney,DateOnly StartDate,DateOnly EndDate);
 public record LobbyPublicDto(string Name,string Description,bool IsPublic);
-public record LobbyPublicDetailDto(string Name,string Slug,bool IsPublic,List<Airline> LobbyMembers,LobbySettings Settings,LobbyStarterAircraft StarterAircraftDetails);
+public record LobbyPublicDetailDto(int Id,string Name,string Slug,bool IsPublic,List<Airline> LobbyMembers,LobbySettings Settings,LobbyStarterAircraft StarterAircraftDetails);
