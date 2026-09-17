@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using airlineRider.DAL;
 using airlineRider.Models.Auth;
 using airlineRider.Services;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -23,12 +24,11 @@ public class LobbyCreationTests
     [SetUp]
     public async Task Setup()
     {
-        _factory = new WebApplicationFactory<Program>();   
+        _factory = new TestingWebApplicationFactory();   
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders
             .Accept
             .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        
         
         var requestBody = new LoginRequest();
         requestBody.Username = "test";
