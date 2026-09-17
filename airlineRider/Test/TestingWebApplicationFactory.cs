@@ -13,6 +13,8 @@ public class TestingWebApplicationFactory: WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        Environment.SetEnvironmentVariable("DOTNET_CURRENT_MODE", "TESTING");
+        
         var postgreSqlContainer = new PostgreSqlBuilder("postgis/postgis:18-3.6")
             .WithEnvironment("POSTGRES_DB","airlineRyder")
             .WithEnvironment("POSTGRES_USER","ryder")
