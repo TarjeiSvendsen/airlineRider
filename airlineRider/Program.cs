@@ -55,7 +55,6 @@ builder.Services.AddScoped<AirlineService>();
 
 
 var app = builder.Build();
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 app.UseHttpsRedirection();
 app.UseResponseCaching();
