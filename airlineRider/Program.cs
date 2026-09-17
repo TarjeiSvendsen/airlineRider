@@ -72,8 +72,8 @@ using (var serviceScope = app.Services.CreateScope())
     
     var typeContext = services.GetRequiredService<TypeContext>();
     
-    typeContext.Database.EnsureDeleted(); // Temporarily here as I constantly change the schema.
-    typeContext.Database.EnsureCreated(); // Will be replaced by Migrations in prod...
+    //typeContext.Database.EnsureDeleted(); // Temporarily here as I constantly change the schema.
+    //typeContext.Database.EnsureCreated(); // Will be replaced by Migrations in prod...
     
     var aircraftTypesImport = new AircraftTypeImporter(typeContext);
     // Imports all aircraft types (or skips it, depending on if it exists in the db already)
